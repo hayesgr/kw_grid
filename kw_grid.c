@@ -1,5 +1,4 @@
 #include "keywords.h"
-//Replace keywords with your own list of keywords
 const char *keywords[]={
     "auto",
     "atomic",
@@ -98,6 +97,7 @@ const char *keywords[]={
     "while"
 };
 
+typedef uint32_t bool_t;
 const uint32_t DEFAULT_KW_COUNT = sizeof(keywords) / sizeof(keywords[0]);
 
 static Slice KEYWORD_GRID[256][16];
@@ -126,18 +126,18 @@ int compare_keywords(const void* a, const void* b) {
 
 int init_table(void) {
     KW_COUNT = DEFAULT_KW_COUNT;
-    
+
     // Allocate local array of string pointers for sorting
     const char** sorted_kw = malloc(KW_COUNT * sizeof(char*));
     memcpy(sorted_kw, keywords, KW_COUNT * sizeof(char*));
 
     // 1. Sort keywords so same (first_letter, length) entries group together
     qsort(sorted_kw, KW_COUNT, sizeof(char*), compare_keywords);
-    
+
     // 2. Setup arrays
     KEYWORDS = calloc(KW_COUNT, sizeof(KeywordEntry));
     memset(KEYWORD_GRID, 0xFF, sizeof(KEYWORD_GRID)); // 0xFFFF sets start to 65535 sentinel
-    
+
     // 3. Build Grid Ranges
     for (uint32_t i = 0; i < KW_COUNT; i++) {
         uint32_t len = str_len(sorted_kw[i]);
@@ -152,7 +152,7 @@ int init_table(void) {
             KEYWORD_GRID[letter_idx][len].count++;
         }
     }
-    
+
     // 4. Build 128-bit SIMD Chunks
     for (uint32_t i = 0; i < KW_COUNT; i++) {
         uint32_t len = str_len(sorted_kw[i]);
@@ -170,8 +170,40 @@ int init_table(void) {
 
     free(sorted_kw);
     return 1;
-}}
+}
+int print_tables(void) {
+    printf("const Slice KW_GRID[256][16] = {\n");
+    for (uint32_t letter = 0; letter < 256; letter++) {
+        // Label display for printable ASCII, raw hex for others
+        if (letter >= 32 && letter <= 126) {
+            printf("   /* '%c' */ {", (char)letter);
+        } else {
+            printf("   /* 0x%02X */ {", letter);
+        }
 
+        for (uint32_t len = 0; len < 16; len++) {
+            printf("{%5u, %3u}", KEYWORD_GRID[letter][len].start, KEYWORD_GRID[letter][len].count);
+            if (len != 15) printf(",");
+        }
+        printf("}");
+        if (letter != 255) printf(",");
+        printf("\n");
+    }
+    printf("};\n\n");
+
+    printf("const KeywordEntry KEYWORDS[%u] = {\n\t", KW_COUNT);
+    for (uint32_t i = 0; i < KW_COUNT; i++) {
+        printf("{{{0x%016llXULL, 0x%016llXULL}}, %2u}",
+               (unsigned long long)KEYWORDS[i].data.chunk[0],
+               (unsigned long long)KEYWORDS[i].data.chunk[1],
+               KEYWORDS[i].id);
+        if (i != KW_COUNT - 1) printf(", ");
+        if (i % 2 == 1) printf("\n\t"); // 2 entries per line for clean layout
+    }
+    printf("\n};\n");
+
+    return 1;
+}
 
 // (__x86_64__) or (_M_X64)
 // --- x86_64 SSE4.1 Path ---
