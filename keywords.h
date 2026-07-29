@@ -6,8 +6,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-#include <emmintrin.h>
-
+#include <smmintrin.h>
 #define MAX_KW_LEN 16
 #define INVALID_TOKEN_ID 0xFFFFFFFFLU
 
@@ -17,7 +16,7 @@ typedef union {
     uint64_t chunk[2];
     __uint128_t raw128;
     __m128i vec;
-} KW_Data;
+} KW_Data,kw_data;
 
 typedef struct {
     KW_Data data;
