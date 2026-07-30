@@ -6,8 +6,15 @@ It uses the word itself as a hash. There is no hash calculation. It is fed into 
 The key word list is sorted into alphabetical order by the first letter and then into shortest to longest in that group.
 This is done so a primary look up table can use the first letter of the word and its length to tell you where to look in the second table and how many potentials there are of that size.
 That is in some ways similar to the bucket of a hash table. Because we have no actual hash calculation we save quite a bit on performance.
-On an intel xeon x5670 we had speeds 25% faster than using gperf testing against the exact same data.
+On an intel xeon x5670 we had speeds 11% faster than using gperf testing against the exact same data.
 That should be even better on newer processor.
 
 Sorry, the code is a bit messy.
 I figured it might be of some use to others and those capable of understanding it shouldn't have much issue with it.
+
+The compiler flags I am using with mingw-w64: 
+-Wall
+-O3
+-msse4.1
+-m64
+-march=native
