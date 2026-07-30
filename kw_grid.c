@@ -145,11 +145,11 @@ int init_table(void) {
 
         if (len > MAX_KW_LEN) continue; // Safety guard
 
-        if (KEYWORD_GRID[letter_idx][len].start == 0xFFFF) {
-            KEYWORD_GRID[letter_idx][len].start = (uint16_t)i;
-            KEYWORD_GRID[letter_idx][len].count = 1;
+        if (KEYWORD_GRID[letter_idx][len-1].start == 0xFFFF) {
+            KEYWORD_GRID[letter_idx][len-1].start = (uint16_t)i;
+            KEYWORD_GRID[letter_idx][len-1].count = 1;
         } else {
-            KEYWORD_GRID[letter_idx][len].count++;
+            KEYWORD_GRID[letter_idx][len-1].count++;
         }
     }
 
@@ -237,11 +237,9 @@ you should aquired length when copying the word to be tested into the union.
 */
 uint32_t is_Keyword(const KW_Data* kw, uint8_t length) {
     uint8_t first_letter = (uint8_t)kw->bytes[0];
-    uint16_t start = KEYWORD_GRID[first_letter][length].start;
-    uint8_t num    = KEYWORD_GRID[first_letter][length].count;
-
+    uint16_t start = KEYWORD_GRID[first_letter][length-1].start;
+    uint8_t num    = KEYWORD_GRID[first_letter][length-1].count;
     if (start == 0xFFFF) return INVALID_TOKEN_ID;
-
     for (uint16_t k = start; k < start + num; k++) {
         if (check_16byte_match(kw, &KEYWORDS[k].data)) {
             return KEYWORDS[k].id;
