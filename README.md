@@ -15,6 +15,5 @@ Sorry, the code is a bit messy.
 The compiler flags I am using with mingw-w64: 
 -Wall
 -O3
--msse4.1
 -m64
--march=native
+(-march=native or -msse4.1)
