@@ -1,4 +1,5 @@
 #include "keywords.h"
+//Replace with your own keywords
 const char *keywords[]={
     "auto",
     "atomic",
