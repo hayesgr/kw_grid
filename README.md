@@ -10,7 +10,7 @@ On an intel xeon x5670 we had speeds 11% faster than using gperf testing against
 That should be even better on newer processor.
 
 Sorry, the code is a bit messy.
-I figured it might be of some use to others and those capable of understanding it shouldn't have much issue with it.
+
 
 The compiler flags I am using with mingw-w64: 
 -Wall
