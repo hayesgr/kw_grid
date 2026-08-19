@@ -211,7 +211,7 @@ int print_tables(void) {
 static inline bool_t check_16byte_match(const kw_data* token, const kw_data* kw) {
     //__m128i diff = _mm_xor_si128(token->vec, kw->vec);
     //return _mm_testz_si128(diff, diff) != 0;
-    return (kw->raw128 ^ token->raw128)!=0;
+    return !(kw->raw128 ^ token->raw128);
 }
 // (__aarch64__)
 // --- ARM64 NEON Path ---
