@@ -20,7 +20,8 @@ typedef union {
 typedef struct {
     KW_Data data;
     uint32_t id;
-} KeywordEntry;
+    uint32_t padding[3];
+}__attribute__((aligned(32))) KeywordEntry;
 
 typedef struct {
     uint16_t start; // Changed to uint16_t to support larger tables safely
