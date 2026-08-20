@@ -102,7 +102,7 @@ typedef uint32_t bool_t;
 const uint32_t DEFAULT_KW_COUNT = sizeof(keywords) / sizeof(keywords[0]);
 
 static Slice KEYWORD_GRID[256][16];
-static KeywordEntry *KEYWORDS = NULL;
+alignas(64) static KeywordEntry *KEYWORDS = NULL;
 static uint32_t KW_COUNT = 0;
 
 uint32_t str_len(const char* str) {
@@ -136,7 +136,8 @@ int init_table(void) {
     qsort(sorted_kw, KW_COUNT, sizeof(char*), compare_keywords);
 
     // 2. Setup arrays
-    KEYWORDS = calloc(KW_COUNT, sizeof(KeywordEntry));
+    KEYWORDS = (KeywordEntry *)_aligned_malloc(sizeof(KeywordEntry) * KW_COUNT, 64);
+    memset(KEYWORDS,0,sizeof(KeywordEntry)*KW_COUNT);
     memset(KEYWORD_GRID, 0xFF, sizeof(KEYWORD_GRID)); // 0xFFFF sets start to 65535 sentinel
 
     // 3. Build Grid Ranges
