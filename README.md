@@ -1,5 +1,6 @@
 # kw_grid
 KW_GRID for lack of a better name is an alternative to a hashtable.
+It is intended for demonstration purposes. As it is it is not meant for production code.
 
 ## It is faster in many cases.
 + Keywords are limited to 16bytes of length.
@@ -27,3 +28,5 @@ That should be even better on newer processor.
 3. Once you have your word for testing call is_keyword.
       + uint32_t is_Keyword(const KW_Data* kw, uint8_t length);
 4. It will return an id if it finds it or it will return INVALID_TOKEN_ID.
+
+
